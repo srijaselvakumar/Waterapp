@@ -51,15 +51,18 @@ if st.button("🔍 Predict Water Quality"):
             st.info("💧 Suggested Usage: **Drinking Water 🚰**")
         else:
             st.error("⚠️ The water is NOT POTABLE (Unsafe to drink).")
-    
-    # Only show Agriculture or Industry suggestion
-            if use_label.lower() in ["agriculture", "industry"]:
-               st.info(f"💧 Suggested Usage: **{use_label} Water**")
-            else:
-             st.info("💧 Suggested Usage: **Agriculture / Industry Water**")
+
+    # Show only Agriculture or Industry based on model output
+           if use_label.lower() == "agriculture":
+             st.info("💧 Suggested Usage: **Agriculture Water 🌾**")
+           elif use_label.lower() == "industry":
+             st.info("💧 Suggested Usage: **Industrial Water 🏭**")
+           else:
+             st.info("💧 Suggested Usage: **Agriculture or Industry Water**")
       
 
     except ValueError:
         st.warning("⚠️ Please enter valid numeric values in all fields!")
+
 
 
