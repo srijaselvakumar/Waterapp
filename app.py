@@ -33,7 +33,6 @@ if st.button("🔍 Predict Water Quality"):
                   float(sulfate), float(conductivity), float(organic_carbon),
                   float(trihalomethanes), float(turbidity)]
 
-        # Convert to numpy array for model
         X = np.array([values])
 
         # Predict potability
@@ -52,22 +51,14 @@ if st.button("🔍 Predict Water Quality"):
         else:
             st.error("⚠️ The water is NOT POTABLE (Unsafe to drink).")
 
-    # Show only Agriculture or Industry based on model prediction
+            # Show only Agriculture or Industry based on model prediction
             if use_label.lower() == "agriculture":
-              st.info("💧 Suggested Usage: **Agriculture Water 🌾**")
+               st.info("💧 Suggested Usage: **Agriculture Water 🌾**")
             elif use_label.lower() == "industry":
-              st.info("💧 Suggested Usage: **Industrial Water 🏭**")
-else:
-    st.warning("💧 Suggested Usage: **Not suitable for any common use**")
+               st.info("💧 Suggested Usage: **Industrial Water 🏭**")
+            else:
+               st.warning("💧 Suggested Usage: **Not suitable for any common use**")
+
            
-
-      
-
-except ValueError:
-    st.warning("⚠️ Please enter valid numeric values in all fields!")
-
-
-
-
-
-
+    except ValueError:
+        st.warning("⚠️ Please enter valid numeric values in all fields!")
