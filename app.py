@@ -48,10 +48,12 @@ if st.button("🔍 Predict Water Quality"):
 
         if potable_pred == 1:
             st.success("✅ The water is POTABLE (Safe to drink).")
+            st.info("💧 Suggested Usage: **Drinking Water 🚰**")
         else:
             st.error("⚠️ The water is NOT POTABLE (Unsafe to drink).")
-
-        st.info(f"💧 Suggested Usage: **{use_label} Water**")
+            st.info(f"💧 Suggested Usage: **{use_label} Water (Agriculture 🌾 / Industry 🏭)**")
+      
 
     except ValueError:
         st.warning("⚠️ Please enter valid numeric values in all fields!")
+
