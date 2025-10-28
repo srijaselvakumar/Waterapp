@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 
 # Load both models
-port_model = pickle.load(open('water_portability_model.pkl', 'rb'))
+port_model = pickle.load(open('water_model.pkl', 'rb'))
 use_model = pickle.load(open('water_use_model.pkl', 'rb'))
 label_encoder = pickle.load(open('label_encoder.pkl', 'rb'))
 
@@ -42,3 +42,4 @@ if st.button("Predict"):
     st.subheader("🔹 Prediction Results")
     st.write(potable_result)
     st.write(suggested_use)
+
