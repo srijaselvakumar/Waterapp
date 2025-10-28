@@ -9,8 +9,8 @@ st.write("This AI-powered app predicts whether water is potable and what it is b
 
 try:
     port_model = joblib.load('water_model.pkl')
-    use_model = joblib.load('water_use_model.pkl')
-    label_encoder = joblib.load('label_encoder.pkl')
+    use_model = joblib.load(open('water_use_model.pkl','rb'))
+    label_encoder = joblib.load(open('label_encoder.pkl','rb'))
     model_loaded = True
 except Exception as e:
     st.error("⚠️ Error loading models. Please check if all .pkl files are uploaded correctly.")
@@ -45,3 +45,4 @@ if st.button("Predict"):
     else:
         st.success("✅ The water is POTABLE (Safe for drinking).")
         st.info(f"💧 Suggested Usage: {usage_label}")
+
