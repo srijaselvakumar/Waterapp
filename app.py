@@ -1,14 +1,20 @@
 import streamlit as st
-import pickle
+import joblib
 import numpy as np
+import os
 
-# Load both models
-port_model = pickle.load(open('water_model.pkl', 'rb'))
-use_model = pickle.load(open('water_use_model.pkl', 'rb'))
-label_encoder = pickle.load(open('label_encoder.pkl', 'rb'))
-
+# Load models safely
 st.title("💧 Water Quality & Usage Prediction App")
 st.write("This AI-powered app predicts whether water is potable and what it is best suitable for — Agriculture 🌾, Industry 🏭, or Drinking 🚰")
+
+try:
+    port_model = joblib.load('water_model.pkl')
+    use_model = joblib.load('water_use_model.pkl')
+    label_encoder = joblib.load('label_encoder.pkl')
+    model_loaded = True
+except Exception as e:
+    st.error("⚠️ Error loading models. Please check if all .pkl files are uploaded correctly.")
+    st.stop()
 
 # Input fields
 pH = st.number_input("pH value")
@@ -21,25 +27,21 @@ Organic_carbon = st.number_input("Organic Carbon")
 Trihalomethanes = st.number_input("Trihalomethanes")
 Turbidity = st.number_input("Turbidity")
 
+# Prediction button
 if st.button("Predict"):
-    features = np.array([[pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity]])
+    features = np.array([[pH, Hardness, Solids, Chloramines, Sulfate, Conductivity,
+                          Organic_carbon, Trihalomethanes, Turbidity]])
 
-    # Predictions
+    # Model predictions
     potable_pred = port_model.predict(features)[0]
     use_pred = use_model.predict(features)[0]
     usage_label = label_encoder.inverse_transform([use_pred])[0]
 
-    # Conditional logic to fix mismatch
-    if potable_pred == 0:
-        potable_result = "⚠️ The water is NOT POTABLE (Unsafe to drink)."
-        # Override usage suggestion if unsafe
-        suggested_use = "🚫 Not recommended for Drinking. Use for Agriculture 🌾 or Industrial 🏭 purposes only."
-    else:
-        potable_result = "✅ The water is POTABLE (Safe for drinking)."
-        suggested_use = f"💧 Suggested Usage: {usage_label}"
-
     # Display results
     st.subheader("🔹 Prediction Results")
-    st.write(potable_result)
-    st.write(suggested_use)
-
+    if potable_pred == 0:
+        st.error("⚠️ The water is NOT POTABLE (Unsafe to drink).")
+        st.warning("🚫 Suggested Usage: Not recommended for Drinking. Suitable for Agriculture 🌾 or Industrial 🏭 use only.")
+    else:
+        st.success("✅ The water is POTABLE (Safe for drinking).")
+        st.info(f"💧 Suggested Usage: {usage_label}")
