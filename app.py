@@ -1,48 +1,57 @@
 import streamlit as st
 import joblib
 import numpy as np
-import os
 
-# Load models safely
+# Load models
+potability_model = joblib.load("water_model.pkl")
+use_model = joblib.load("water_use_model.pkl")
+label_encoder = joblib.load("label_encoder.pkl")
+
 st.title("💧 Water Quality & Usage Prediction App")
-st.write("This AI-powered app predicts whether water is potable and what it is best suitable for — Agriculture 🌾, Industry 🏭, or Drinking 🚰")
 
-try:
-    port_model = joblib.load('water_model.pkl')
-    use_model = joblib.load(open('water_use_model.pkl','rb'))
-    label_encoder = joblib.load(open('label_encoder.pkl','rb'))
-    model_loaded = True
-except Exception as e:
-    st.error("⚠️ Error loading models. Please check if all .pkl files are uploaded correctly.")
-    st.stop()
+st.write("""
+This AI-powered app predicts:
+1. Whether the water is **Potable (Safe for Drinking)**  
+2. What the water is **Best Suitable For** → Agriculture 🌾 | Industry 🏭 | Drinking 🚰
+""")
 
 # Input fields
-pH = st.number_input("pH value")
-Hardness = st.number_input("Hardness")
-Solids = st.number_input("Solids")
-Chloramines = st.number_input("Chloramines")
-Sulfate = st.number_input("Sulfate")
-Conductivity = st.number_input("Conductivity")
-Organic_carbon = st.number_input("Organic Carbon")
-Trihalomethanes = st.number_input("Trihalomethanes")
-Turbidity = st.number_input("Turbidity")
+ph = st.text_input("pH value")
+hardness = st.text_input("Hardness")
+solids = st.text_input("Solids")
+chloramines = st.text_input("Chloramines")
+sulfate = st.text_input("Sulfate")
+conductivity = st.text_input("Conductivity")
+organic_carbon = st.text_input("Organic Carbon")
+trihalomethanes = st.text_input("Trihalomethanes")
+turbidity = st.text_input("Turbidity")
 
-# Prediction button
-if st.button("Predict"):
-    features = np.array([[pH, Hardness, Solids, Chloramines, Sulfate, Conductivity,
-                          Organic_carbon, Trihalomethanes, Turbidity]])
+if st.button("🔍 Predict Water Quality"):
+    try:
+        # Convert inputs to float
+        values = [float(ph), float(hardness), float(solids), float(chloramines),
+                  float(sulfate), float(conductivity), float(organic_carbon),
+                  float(trihalomethanes), float(turbidity)]
 
-    # Model predictions
-    potable_pred = port_model.predict(features)[0]
-    use_pred = use_model.predict(features)[0]
-    usage_label = label_encoder.inverse_transform([use_pred])[0]
+        # Convert to numpy array for model
+        X = np.array([values])
 
-    # Display results
-    st.subheader("🔹 Prediction Results")
-    if potable_pred == 0:
-        st.error("⚠️ The water is NOT POTABLE (Unsafe to drink).")
-        st.warning("🚫 Suggested Usage: Not recommended for Drinking. Suitable for Agriculture 🌾 or Industrial 🏭 use only.")
-    else:
-        st.success("✅ The water is POTABLE (Safe for drinking).")
-        st.info(f"💧 Suggested Usage: {usage_label}")
+        # Predict potability
+        potable_pred = potability_model.predict(X)[0]
 
+        # Predict usage type
+        use_pred = use_model.predict(X)
+        use_label = label_encoder.inverse_transform(use_pred)[0]
+
+        # Display results
+        st.subheader("🔹 Prediction Results")
+
+        if potable_pred == 1:
+            st.success("✅ The water is POTABLE (Safe to drink).")
+        else:
+            st.error("⚠️ The water is NOT POTABLE (Unsafe to drink).")
+
+        st.info(f"💧 Suggested Usage: **{use_label} Water**")
+
+    except ValueError:
+        st.warning("⚠️ Please enter valid numeric values in all fields!")
