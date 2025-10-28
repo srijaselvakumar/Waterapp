@@ -57,8 +57,9 @@ if st.button("🔍 Predict Water Quality"):
             elif use_label.lower() == "industry":
                st.info("💧 Suggested Usage: **Industrial Water 🏭**")
             else:
-               st.warning("💧 Suggested Usage: **Not suitable for any common use**")
+               st.warning("💧 Suggested Usage: **Industrial use**")
 
            
     except ValueError:
         st.warning("⚠️ Please enter valid numeric values in all fields!")
+
